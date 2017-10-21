@@ -1,6 +1,7 @@
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const CleanWebpackPlugin = require('clean-webpack-plugin');
+const CopyWebpackPlugin = require('copy-webpack-plugin');
 
 module.exports = {
   entry: './src/index.ts',
@@ -22,9 +23,13 @@ module.exports = {
   },
   plugins: [
     new HtmlWebpackPlugin({
-      title: 'Phaser Typescript Webpack Starter'
+      title: 'Phaser Typescript Webpack Starter',
+      template: './src/index.ejs'
     }),
-    new CleanWebpackPlugin(['dist'])
+    new CleanWebpackPlugin(['dist']),
+    new CopyWebpackPlugin([
+      { from: './src/assets' }
+    ])
   ],
   module: {
     rules: [

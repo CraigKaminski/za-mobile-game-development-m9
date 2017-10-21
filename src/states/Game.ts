@@ -1,8 +1,6 @@
-const logoUrl = require('../assets/images/phaser.png');
-
-class GameState extends Phaser.State {
+export class Game extends Phaser.State {
   public preload() {
-    this.game.load.image('logo', logoUrl);
+    this.game.load.image('logo', 'images/phaser.png');
   }
 
   public create() {
@@ -10,5 +8,3 @@ class GameState extends Phaser.State {
     logo.anchor.setTo(0.5, 0.5);
   }
 }
-
-export default GameState;
