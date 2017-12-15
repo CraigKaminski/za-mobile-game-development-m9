@@ -23,7 +23,7 @@ module.exports = {
   },
   plugins: [
     new HtmlWebpackPlugin({
-      title: 'Phaser Typescript Webpack Starter',
+      title: 'Zenva Academy - Mobie Game Development: Module 2',
       template: './src/index.ejs'
     }),
     new CleanWebpackPlugin(['dist']),
