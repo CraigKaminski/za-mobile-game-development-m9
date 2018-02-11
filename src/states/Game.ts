@@ -1,10 +1,36 @@
 export class Game extends Phaser.State {
-  public preload() {
-    this.game.load.image('logo', 'images/phaser.png');
+  private backgroundLayer: Phaser.TilemapLayer;
+  private collisionLayer: Phaser.TilemapLayer;
+  private currentLevel: string;
+  private cursors: Phaser.CursorKeys;
+  private map: Phaser.Tilemap;
+  private readonly PLAYER_SPEED = 90;
+
+  public init(currentLevel: string) {
+    this.currentLevel = currentLevel ? currentLevel : 'map1';
+    this.physics.arcade.gravity.y = 0;
+    this.cursors = this.game.input.keyboard.createCursorKeys();
   }
 
   public create() {
-    const logo = this.game.add.sprite(this.game.world.centerX, this.game.world.centerY, 'logo');
-    logo.anchor.setTo(0.5, 0.5);
+    this.loadLevel();
+  }
+
+  public update() {
+
+  }
+
+  private loadLevel() {
+    this.map = this.add.tilemap(this.currentLevel);
+    this.map.addTilesetImage('terrains', 'tilesheet');
+    this.backgroundLayer = this.map.createLayer('backgroundLayer');
+    this.collisionLayer = this.map.createLayer('collisionLayer');
+    this.world.sendToBack(this.backgroundLayer);
+    this.map.setCollisionBetween(1, 16, true, 'collisionLayer');
+    this.collisionLayer.resizeWorld();
+  }
+
+  private gameOver() {
+    this.state.start('Game', true, false, this.currentLevel);
   }
 }
