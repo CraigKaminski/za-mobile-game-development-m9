@@ -10,6 +10,7 @@ export interface IPlayerData {
 }
 
 export class Player extends Phaser.Sprite {
+  public btnsPressed: any;
   public data: IPlayerData;
   private state: Game;
 

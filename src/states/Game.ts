@@ -1,3 +1,4 @@
+import { OnscreenControls } from '../plugins/OnscreenControls';
 import { IPlayerData, Player } from '../prefabs/Player';
 
 export class Game extends Phaser.State {
@@ -6,6 +7,7 @@ export class Game extends Phaser.State {
   private currentLevel: string;
   private cursors: Phaser.CursorKeys;
   private map: Phaser.Tilemap;
+  private onscreenControls: OnscreenControls;
   private player: Player;
   private readonly PLAYER_SPEED = 90;
 
@@ -16,6 +18,7 @@ export class Game extends Phaser.State {
   }
 
   public create() {
+    this.onscreenControls = this.game.plugins.add(OnscreenControls);
     this.loadLevel();
   }
 
@@ -44,9 +47,25 @@ export class Game extends Phaser.State {
     this.player = new Player(this, 100, 100, playerData);
 
     this.add.existing(this.player);
+
+    this.initGUI();
   }
 
   private gameOver() {
     this.state.start('Game', true, false, this.currentLevel);
+  }
+
+  private initGUI() {
+    this.onscreenControls.setup(this.player, {
+      action: true,
+      down: true,
+      downleft: true,
+      downright: true,
+      left: true,
+      right: true,
+      up: true,
+      upleft: true,
+      upright: true,
+    });
   }
 }
