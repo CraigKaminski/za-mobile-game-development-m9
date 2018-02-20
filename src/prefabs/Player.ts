@@ -19,7 +19,13 @@ export interface IPlayerData {
   gold: number;
   health: number;
   items: Item[];
-  quests: any[];
+  quests: IQuest[];
+}
+
+interface IQuest {
+  name: string;
+  code: string;
+  isCompleted: boolean;
 }
 
 export class Player extends Phaser.Sprite {
@@ -39,9 +45,25 @@ export class Player extends Phaser.Sprite {
     this.game.physics.arcade.enable(this);
   }
 
+  public checkQuestCompletion(item: Item) {
+    let i = 0;
+    const len = this.data.quests.length;
+
+    while (i < len) {
+      if (this.data.quests[i].code === item.data.questCode) {
+        this.data.quests[i].isCompleted = true;
+        console.log(this.data.quests[i].name + ' has been completed');
+        break;
+      }
+      i++;
+    }
+  }
+
   public collectItem(item: Item) {
     if (item.data.isQuest) {
       this.data.items.push(item);
+
+      this.checkQuestCompletion(item);
     } else {
       this.data.health += item.data.health ? item.data.health : 0;
       this.data.attack += item.data.attack ? item.data.attack : 0;

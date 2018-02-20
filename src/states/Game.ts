@@ -100,7 +100,18 @@ export class Game extends Phaser.State {
       gold: 100,
       health: 25,
       items: [],
-      quests: [],
+      quests: [
+        {
+          code: 'magic-scroll',
+          isCompleted: false,
+          name: 'Find the Magic Scroll',
+        },
+        {
+          code: 'gods-helmet',
+          isCompleted: false,
+          name: 'Find the Helmet of the Gods',
+        },
+      ],
     };
 
     this.player = new Player(this, 100, 100, playerData);
