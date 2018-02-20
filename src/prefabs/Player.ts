@@ -1,5 +1,17 @@
 import { Game } from '../states/Game';
 
+interface IBtnsPressed {
+  action?: boolean;
+  down?: boolean;
+  downleft?: boolean;
+  downright?: boolean;
+  left?: boolean;
+  right?: boolean;
+  up?: boolean;
+  upleft?: boolean;
+  upright?: boolean;
+}
+
 export interface IPlayerData {
   attack: number;
   defense: number;
@@ -10,7 +22,8 @@ export interface IPlayerData {
 }
 
 export class Player extends Phaser.Sprite {
-  public btnsPressed: any;
+  public body: Phaser.Physics.Arcade.Body;
+  public btnsPressed: IBtnsPressed;
   public data: IPlayerData;
   private state: Game;
 
@@ -21,7 +34,7 @@ export class Player extends Phaser.Sprite {
     this.state = state;
 
     this.anchor.setTo(0.5);
-    this.animations.add('walking', [0, 1, 0], 6, false);
+    this.animations.add('walk', [0, 1, 0], 6, false);
     this.game.physics.arcade.enable(this);
   }
 }

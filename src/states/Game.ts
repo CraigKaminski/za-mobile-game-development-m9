@@ -23,7 +23,57 @@ export class Game extends Phaser.State {
   }
 
   public update() {
+    this.player.body.velocity.x = 0;
+    this.player.body.velocity.y = 0;
 
+    if (
+      this.cursors.left.isDown ||
+      this.player.btnsPressed.left ||
+      this.player.btnsPressed.upleft ||
+      this.player.btnsPressed.downleft
+    ) {
+      this.player.body.velocity.x = -this.PLAYER_SPEED;
+      this.player.scale.setTo(1, 1);
+    }
+
+    if (
+      this.cursors.right.isDown ||
+      this.player.btnsPressed.right ||
+      this.player.btnsPressed.upright ||
+      this.player.btnsPressed.downright
+    ) {
+      this.player.body.velocity.x = this.PLAYER_SPEED;
+      this.player.scale.setTo(-1, 1);
+    }
+
+    if (
+      this.cursors.up.isDown ||
+      this.player.btnsPressed.up ||
+      this.player.btnsPressed.upleft ||
+      this.player.btnsPressed.upright
+    ) {
+      this.player.body.velocity.y = -this.PLAYER_SPEED;
+    }
+
+    if (
+      this.cursors.down.isDown ||
+      this.player.btnsPressed.down ||
+      this.player.btnsPressed.downleft ||
+      this.player.btnsPressed.downright
+    ) {
+      this.player.body.velocity.y = this.PLAYER_SPEED;
+    }
+
+    if (this.game.input.activePointer.isUp) {
+      this.onscreenControls.stopMovement();
+    }
+
+    if (this.player.body.velocity.x !== 0 || this.player.body.velocity.y !== 0) {
+      this.player.play('walk');
+    } else {
+      this.player.animations.stop();
+      this.player.frame = 0;
+    }
   }
 
   private loadLevel() {

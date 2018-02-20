@@ -41,8 +41,6 @@ export class OnscreenControls extends Phaser.Plugin {
 
   constructor(game: Phaser.Game, parent: Phaser.PluginManager) {
     super(game, parent);
-
-    console.log('plugin ready');
   }
 
   public setup(player: Player, buttons: IButtons) {
@@ -151,19 +149,19 @@ export class OnscreenControls extends Phaser.Plugin {
       this.downArrow.fixedToCamera = true;
 
       this.downArrow.events.onInputDown.add(() => {
-        this.player.btnsPressed.up = true;
+        this.player.btnsPressed.down = true;
       });
 
       this.downArrow.events.onInputUp.add(() => {
-        this.player.btnsPressed.up = false;
+        this.player.btnsPressed.down = false;
       });
 
       this.downArrow.events.onInputOver.add(() => {
-        this.player.btnsPressed.up = true;
+        this.player.btnsPressed.down = true;
       });
 
       this.downArrow.events.onInputOut.add(() => {
-        this.player.btnsPressed.up = false;
+        this.player.btnsPressed.down = false;
       });
     }
 
@@ -270,5 +268,9 @@ export class OnscreenControls extends Phaser.Plugin {
         player.btnsPressed.action = false;
       });
     }
+  }
+
+  public stopMovement() {
+    this.player.btnsPressed = {};
   }
 }
