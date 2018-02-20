@@ -1,4 +1,5 @@
 import { Game } from '../states/Game';
+import { Item } from './Item';
 
 interface IBtnsPressed {
   action?: boolean;
@@ -17,7 +18,7 @@ export interface IPlayerData {
   defense: number;
   gold: number;
   health: number;
-  items: any[];
+  items: Item[];
   quests: any[];
 }
 
@@ -36,5 +37,17 @@ export class Player extends Phaser.Sprite {
     this.anchor.setTo(0.5);
     this.animations.add('walk', [0, 1, 0], 6, false);
     this.game.physics.arcade.enable(this);
+  }
+
+  public collectItem(item: Item) {
+    if (item.data.isQuest) {
+      this.data.items.push(item);
+    } else {
+      this.data.health += item.data.health ? item.data.health : 0;
+      this.data.attack += item.data.attack ? item.data.attack : 0;
+      this.data.defense += item.data.defense ? item.data.defense : 0;
+      this.data.gold += item.data.gold ? item.data.gold : 0;
+    }
+    item.kill();
   }
 }

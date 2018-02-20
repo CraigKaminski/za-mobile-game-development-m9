@@ -25,6 +25,9 @@ export class Game extends Phaser.State {
   }
 
   public update() {
+    this.game.physics.arcade.collide(this.player, this.collisionLayer);
+
+    this.game.physics.arcade.overlap(this.player, this.items, this.collect, undefined, this);
     this.player.body.velocity.x = 0;
     this.player.body.velocity.y = 0;
 
@@ -76,6 +79,10 @@ export class Game extends Phaser.State {
       this.player.animations.stop();
       this.player.frame = 0;
     }
+  }
+
+  private collect(player: Player, item: Item) {
+    player.collectItem(item);
   }
 
   private loadLevel() {
