@@ -1,4 +1,5 @@
 import { OnscreenControls } from '../plugins/OnscreenControls';
+import { Item } from '../prefabs/Item';
 import { IPlayerData, Player } from '../prefabs/Player';
 
 export class Game extends Phaser.State {
@@ -6,6 +7,7 @@ export class Game extends Phaser.State {
   private collisionLayer: Phaser.TilemapLayer;
   private currentLevel: string;
   private cursors: Phaser.CursorKeys;
+  private items: Phaser.Group;
   private map: Phaser.Tilemap;
   private onscreenControls: OnscreenControls;
   private player: Player;
@@ -97,6 +99,23 @@ export class Game extends Phaser.State {
     this.player = new Player(this, 100, 100, playerData);
 
     this.add.existing(this.player);
+
+    this.items = this.add.group();
+
+    const potion = new Item(this, 100, 150, 'potion', {health: 10});
+    this.items.add(potion);
+
+    const sword = new Item(this, 100, 180, 'sword', {attack: 2});
+    this.items.add(sword);
+
+    const shield = new Item(this, 100, 210, 'shield', {defense: 2});
+    this.items.add(shield);
+
+    const chest = new Item(this, 100, 240, 'chest', {gold: 100});
+    this.items.add(chest);
+
+    const questItem = new Item(this, 100, 270, 'scroll', {isQuest: true, questCode: 'magic-scroll'});
+    this.items.add(questItem);
 
     this.initGUI();
   }
