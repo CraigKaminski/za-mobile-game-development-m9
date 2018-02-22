@@ -132,20 +132,9 @@ export class Game extends Phaser.State {
 
     this.items = this.add.group();
 
-    const potion = new Item(this, 100, 150, 'potion', {health: 10});
-    this.items.add(potion);
+    this.loadItems();
 
-    const sword = new Item(this, 100, 180, 'sword', {attack: 2});
-    this.items.add(sword);
-
-    const shield = new Item(this, 100, 210, 'shield', {defense: 2});
-    this.items.add(shield);
-
-    const chest = new Item(this, 100, 240, 'chest', {gold: 100});
-    this.items.add(chest);
-
-    const questItem = new Item(this, 100, 270, 'scroll', {isQuest: true, questCode: 'magic-scroll'});
-    this.items.add(questItem);
+    this.game.camera.follow(this.player);
 
     this.initGUI();
   }
@@ -194,5 +183,34 @@ export class Game extends Phaser.State {
     this.defenseLabel.fixedToCamera = true;
 
     this.refreshStats();
+  }
+
+  private findObjectsByType(targetType: string, tilemap: Phaser.Tilemap, layer: string) {
+    const result: any[] = [];
+
+    (tilemap.objects as any)[layer].forEach((element: any) => {
+      if (element.properties.type === targetType) {
+        element.y -= tilemap.tileHeight / 2;
+        element.x += tilemap.tileHeight / 2;
+        result.push(element);
+      }
+    });
+
+    return result;
+  }
+
+  private loadItems() {
+    const elementsArr = this.findObjectsByType('item', this.map, 'objectsLayer');
+    let elementObj;
+
+    elementsArr.forEach((element) => {
+      for (const prop of ['attack', 'defense', 'gold', 'health']) {
+        if (element.properties[prop]) {
+          element.properties[prop] = +element.properties[prop];
+        }
+      }
+      elementObj = new Item(this, element.x, element.y, element.properties.asset, element.properties);
+      this.items.add(elementObj);
+    });
   }
 }
