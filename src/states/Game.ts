@@ -3,10 +3,16 @@ import { Item } from '../prefabs/Item';
 import { IPlayerData, Player } from '../prefabs/Player';
 
 export class Game extends Phaser.State {
+  private attackIcon: Phaser.Sprite;
+  private attackLabel: Phaser.Text;
   private backgroundLayer: Phaser.TilemapLayer;
   private collisionLayer: Phaser.TilemapLayer;
   private currentLevel: string;
   private cursors: Phaser.CursorKeys;
+  private defenseIcon: Phaser.Sprite;
+  private defenseLabel: Phaser.Text;
+  private goldIcon: Phaser.Sprite;
+  private goldLabel: Phaser.Text;
   private items: Phaser.Group;
   private map: Phaser.Tilemap;
   private onscreenControls: OnscreenControls;
@@ -79,6 +85,12 @@ export class Game extends Phaser.State {
       this.player.animations.stop();
       this.player.frame = 0;
     }
+  }
+
+  public refreshStats() {
+    this.attackLabel.text = this.player.data.attack.toString();
+    this.defenseLabel.text = this.player.data.defense.toString();
+    this.goldLabel.text = this.player.data.gold.toString();
   }
 
   private collect(player: Player, item: Item) {
@@ -154,5 +166,33 @@ export class Game extends Phaser.State {
       upleft: true,
       upright: true,
     });
+
+    this.showPlayerIcons();
+  }
+
+  private showPlayerIcons() {
+    this.goldIcon = this.add.sprite(10, 10, 'coin');
+    this.goldIcon.fixedToCamera = true;
+
+    const style = {
+      fill: '#fff',
+      font: '14px Arial',
+    };
+    this.goldLabel = this.add.text(30, 10, '0', style);
+    this.goldLabel.fixedToCamera = true;
+
+    this.attackIcon = this.add.sprite(70, 10, 'sword');
+    this.attackIcon.fixedToCamera = true;
+
+    this.attackLabel = this.add.text(90, 10, '0', style);
+    this.attackLabel.fixedToCamera = true;
+
+    this.defenseIcon = this.add.sprite(130, 10, 'shield');
+    this.defenseIcon.fixedToCamera = true;
+
+    this.defenseLabel = this.add.text(150, 10, '0', style);
+    this.defenseLabel.fixedToCamera = true;
+
+    this.refreshStats();
   }
 }
