@@ -16,7 +16,7 @@ export class Enemy extends Phaser.Sprite {
     super(state.game, x, y, key);
 
     this.state = state;
-    this.data = data;
+    this.data = {...data};
 
     this.healthBar = new Phaser.Sprite(state.game, this.x, this.y, 'bar');
     this.game.add.existing(this.healthBar);

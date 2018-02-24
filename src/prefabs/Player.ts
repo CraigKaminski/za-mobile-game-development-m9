@@ -38,7 +38,7 @@ export class Player extends Phaser.Sprite {
   constructor(state: Game, x: number, y: number, data: IPlayerData) {
     super(state.game, x, y, 'player');
 
-    this.data = data;
+    this.data = {...data};
     this.state = state;
 
     this.anchor.setTo(0.5);
