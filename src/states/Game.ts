@@ -140,9 +140,7 @@ export class Game extends Phaser.State {
     this.loadItems();
 
     this.enemies = this.add.group();
-    // this.loadEnemies();
-    const enemy = new Enemy(this, 200, 60, 'monster', {attack: 10, health: 20, defense: 5});
-    this.enemies.add(enemy);
+    this.loadEnemies();
 
     this.battle = new Battle(this.game);
 
@@ -227,7 +225,18 @@ export class Game extends Phaser.State {
   }
 
   private loadEnemies() {
+    const elementsArr = this.findObjectsByType('enemy', this.map, 'objectsLayer');
+    let elementObj;
 
+    elementsArr.forEach((element) => {
+      for (const prop of ['attack', 'defense', 'health']) {
+        if (element.properties[prop]) {
+          element.properties[prop] = +element.properties[prop];
+        }
+      }
+      elementObj = new Enemy(this, element.x, element.y, element.properties.asset, element.properties);
+      this.enemies.add(elementObj);
+    });
   }
 
   private attack(player: Player, enemy: Enemy) {
@@ -245,6 +254,10 @@ export class Game extends Phaser.State {
     }
     if (player.body.touching.right) {
       player.x -= 20;
+    }
+
+    if (player.data.health <= 0) {
+      this.gameOver();
     }
   }
 }
