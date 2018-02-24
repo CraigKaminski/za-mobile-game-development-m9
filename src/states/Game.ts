@@ -20,7 +20,13 @@ export class Game extends Phaser.State {
   private items: Phaser.Group;
   private map: Phaser.Tilemap;
   private onscreenControls: OnscreenControls;
+  private overlay: Phaser.BitmapData;
   private player: Player;
+  private questIcon: Phaser.Sprite;
+  private questInfo: Phaser.Text;
+  private questsPanel: Phaser.Sprite;
+  private questsPanelGroup: Phaser.Group;
+  private uiBlocked = false;
   private readonly PLAYER_SPEED = 90;
 
   public init(currentLevel: string) {
@@ -43,43 +49,44 @@ export class Game extends Phaser.State {
 
     this.player.body.velocity.x = 0;
     this.player.body.velocity.y = 0;
+    if (!this.uiBlocked) {
+      if (
+        this.cursors.left.isDown ||
+        this.player.btnsPressed.left ||
+        this.player.btnsPressed.upleft ||
+        this.player.btnsPressed.downleft
+      ) {
+        this.player.body.velocity.x = -this.PLAYER_SPEED;
+        this.player.scale.setTo(1, 1);
+      }
 
-    if (
-      this.cursors.left.isDown ||
-      this.player.btnsPressed.left ||
-      this.player.btnsPressed.upleft ||
-      this.player.btnsPressed.downleft
-    ) {
-      this.player.body.velocity.x = -this.PLAYER_SPEED;
-      this.player.scale.setTo(1, 1);
-    }
+      if (
+        this.cursors.right.isDown ||
+        this.player.btnsPressed.right ||
+        this.player.btnsPressed.upright ||
+        this.player.btnsPressed.downright
+      ) {
+        this.player.body.velocity.x = this.PLAYER_SPEED;
+        this.player.scale.setTo(-1, 1);
+      }
 
-    if (
-      this.cursors.right.isDown ||
-      this.player.btnsPressed.right ||
-      this.player.btnsPressed.upright ||
-      this.player.btnsPressed.downright
-    ) {
-      this.player.body.velocity.x = this.PLAYER_SPEED;
-      this.player.scale.setTo(-1, 1);
-    }
+      if (
+        this.cursors.up.isDown ||
+        this.player.btnsPressed.up ||
+        this.player.btnsPressed.upleft ||
+        this.player.btnsPressed.upright
+      ) {
+        this.player.body.velocity.y = -this.PLAYER_SPEED;
+      }
 
-    if (
-      this.cursors.up.isDown ||
-      this.player.btnsPressed.up ||
-      this.player.btnsPressed.upleft ||
-      this.player.btnsPressed.upright
-    ) {
-      this.player.body.velocity.y = -this.PLAYER_SPEED;
-    }
-
-    if (
-      this.cursors.down.isDown ||
-      this.player.btnsPressed.down ||
-      this.player.btnsPressed.downleft ||
-      this.player.btnsPressed.downright
-    ) {
-      this.player.body.velocity.y = this.PLAYER_SPEED;
+      if (
+        this.cursors.down.isDown ||
+        this.player.btnsPressed.down ||
+        this.player.btnsPressed.downleft ||
+        this.player.btnsPressed.downright
+      ) {
+        this.player.body.velocity.y = this.PLAYER_SPEED;
+      }
     }
 
     if (this.game.input.activePointer.isUp) {
@@ -193,6 +200,30 @@ export class Game extends Phaser.State {
     this.defenseLabel.fixedToCamera = true;
 
     this.refreshStats();
+
+    this.questIcon = this.add.sprite(this.game.width - 30, 10, 'quest');
+    this.questIcon.fixedToCamera = true;
+
+    this.overlay = this.add.bitmapData(this.game.width, this.game.height);
+    this.overlay.ctx.fillStyle = '#000';
+    this.overlay.ctx.fillRect(0, 0, this.game.width, this.game.height);
+
+    this.questsPanelGroup = this.add.group();
+    this.questsPanelGroup.y = this.game.height;
+    this.questsPanel = new Phaser.Sprite(this.game, 0, 0, this.overlay);
+    this.questsPanel.alpha = 0.8;
+    this.questsPanel.fixedToCamera = true;
+    this.questsPanelGroup.add(this.questsPanel);
+
+    this.questInfo = new Phaser.Text(this.game, 50, 50, '', style);
+    this.questInfo.fixedToCamera = true;
+    this.questsPanelGroup.add(this.questInfo);
+
+    this.questIcon.inputEnabled = true;
+    this.questIcon.events.onInputDown.add(this.showQuests, this);
+
+    this.questsPanel.inputEnabled = true;
+    this.questsPanel.events.onInputDown.add(this.hideQuests, this);
   }
 
   private findObjectsByType(targetType: string, tilemap: Phaser.Tilemap, layer: string) {
@@ -259,5 +290,29 @@ export class Game extends Phaser.State {
     if (player.data.health <= 0) {
       this.gameOver();
     }
+  }
+
+  private showQuests() {
+    this.uiBlocked = true;
+    const showPanelTween = this.add.tween(this.questsPanelGroup);
+    showPanelTween.to({y: 0}, 150);
+    showPanelTween.onComplete.add(() => {
+      let questsText = 'QUESTS\n';
+
+      this.player.data.quests.forEach((quest) => {
+        questsText += quest.name + (quest.isCompleted ? ' - DONE' : '') + '\n';
+      }, this);
+
+      this.questInfo.text = questsText;
+    }, this);
+    showPanelTween.start();
+  }
+
+  private hideQuests() {
+    this.uiBlocked = false;
+    this.questInfo.text = '';
+    const hidePanelTween = this.add.tween(this.questsPanelGroup);
+    hidePanelTween.to({y: this.game.height}, 150);
+    hidePanelTween.start();
   }
 }

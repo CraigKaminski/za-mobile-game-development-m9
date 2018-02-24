@@ -66,7 +66,6 @@ export class Player extends Phaser.Sprite {
     while (i < len) {
       if (this.data.quests[i].code === item.data.questCode) {
         this.data.quests[i].isCompleted = true;
-        console.log(this.data.quests[i].name + ' has been completed');
         break;
       }
       i++;
