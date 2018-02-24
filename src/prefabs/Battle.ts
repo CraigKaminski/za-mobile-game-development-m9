@@ -10,6 +10,13 @@ export class Battle {
 
     attacked.data.health -= damage;
 
+    const attackedTween = this.game.add.tween(attacked);
+    attackedTween.to({tint: 0xFF0000}, 200);
+    attackedTween.onComplete.add(() => {
+      attacked.tint = 0xFFFFFF;
+    }, this);
+    attackedTween.start();
+
     if (attacked.data.health <= 0) {
       attacked.kill();
     }
