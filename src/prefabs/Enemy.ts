@@ -7,6 +7,7 @@ interface IEnemyData {
 }
 
 export class Enemy extends Phaser.Sprite {
+  public body: Phaser.Physics.Arcade.Body;
   public data: IEnemyData;
   private state: Game;
 
@@ -18,5 +19,6 @@ export class Enemy extends Phaser.Sprite {
 
     this.anchor.setTo(0.5);
     this.game.physics.arcade.enable(this);
+    this.body.immovable = true;
   }
 }
