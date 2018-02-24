@@ -1,4 +1,6 @@
 import { OnscreenControls } from '../plugins/OnscreenControls';
+import { Battle } from '../prefabs/Battle';
+import { Enemy } from '../prefabs/Enemy';
 import { Item } from '../prefabs/Item';
 import { IPlayerData, Player } from '../prefabs/Player';
 
@@ -6,11 +8,13 @@ export class Game extends Phaser.State {
   private attackIcon: Phaser.Sprite;
   private attackLabel: Phaser.Text;
   private backgroundLayer: Phaser.TilemapLayer;
+  private battle: Battle;
   private collisionLayer: Phaser.TilemapLayer;
   private currentLevel: string;
   private cursors: Phaser.CursorKeys;
   private defenseIcon: Phaser.Sprite;
   private defenseLabel: Phaser.Text;
+  private enemies: Phaser.Group;
   private goldIcon: Phaser.Sprite;
   private goldLabel: Phaser.Text;
   private items: Phaser.Group;
@@ -34,6 +38,9 @@ export class Game extends Phaser.State {
     this.game.physics.arcade.collide(this.player, this.collisionLayer);
 
     this.game.physics.arcade.overlap(this.player, this.items, this.collect, undefined, this);
+
+    this.game.physics.arcade.overlap(this.player, this.enemies, this.attack, undefined, this);
+
     this.player.body.velocity.x = 0;
     this.player.body.velocity.y = 0;
 
@@ -127,12 +134,17 @@ export class Game extends Phaser.State {
     };
 
     this.player = new Player(this, 100, 100, playerData);
-
     this.add.existing(this.player);
 
     this.items = this.add.group();
-
     this.loadItems();
+
+    this.enemies = this.add.group();
+    // this.loadEnemies();
+    const enemy = new Enemy(this, 200, 60, 'monster', {attack: 10, health: 20, defense: 5});
+    this.enemies.add(enemy);
+
+    this.battle = new Battle(this.game);
 
     this.game.camera.follow(this.player);
 
@@ -212,5 +224,27 @@ export class Game extends Phaser.State {
       elementObj = new Item(this, element.x, element.y, element.properties.asset, element.properties);
       this.items.add(elementObj);
     });
+  }
+
+  private loadEnemies() {
+
+  }
+
+  private attack(player: Player, enemy: Enemy) {
+    this.battle.attack(player, enemy);
+    this.battle.attack(enemy, player);
+
+    if (player.body.touching.up) {
+      player.y += 20;
+    }
+    if (player.body.touching.down) {
+      player.y -= 20;
+    }
+    if (player.body.touching.left) {
+      player.x += 20;
+    }
+    if (player.body.touching.right) {
+      player.x -= 20;
+    }
   }
 }
